@@ -1,0 +1,22 @@
+{
+  "name": "shri-2-3-altorithm",
+  "version": "1.0.0",
+  "description": "Третье задание для ШРИ",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashugaev/shri-algoritm.git"
+  },
+  "author": "Aleksey Shugaev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashugaev/shri-algoritm/issues"
+  },
+  "homepage": "https://github.com/ashugaev/shri-algoritm#readme",
+  "devDependencies": {
+    "jest": "^23.5.0"
+  }
+}
