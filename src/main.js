@@ -47,7 +47,7 @@ let Placer = {
         }
 
         console.log(this.data.outputData)
-        console.timeEnd('speedCheck')
+        // console.timeEnd('speedCheck')
 
         // Тут пушим в массив, который в итоге будем давать как выходные данные
         return this.data.outputData;
@@ -111,16 +111,14 @@ let Placer = {
         }
 
         // Вернем подходящие ячейки
-        console.log(goodPlaces)
+        // console.log(goodPlaces)
         return goodPlaces;
     },
 
     // Проверим подходит ли x под требуемое время суток для работы
     checkTimezone(x, oneDevice) {
-        console.log('sdf')
         let dayStart = this.data.dayStart;
         let nightStart = this.data.nightStart;
-        console.log(oneDevice.mode)
         if (oneDevice.mode === 'day' && (x < dayStart || x + oneDevice.duration > nightStart)) {
             return false;
         } else if (
@@ -205,9 +203,7 @@ let Placer = {
             deviceId: block.id
         });
 
-        // throw new Error("Ужасная ошибка");
-
-        console.log('Невозможно добавить в расписание устройство: ', block.name);
+        throw new Error('Невозможно добавить в расписание устройство: ', block.name);
     },
 
     pushToOutput(block) {

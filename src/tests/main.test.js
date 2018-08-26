@@ -23,7 +23,6 @@ test('sortDevices - Сортировка устройств по мощност�
 			duration: 3
 		}
 	];
-	console.log(Placer);
 	const result = Placer.sortDevices(devices);
 	expect([result[0].id, result[1].id, result[2].id, result[3].id]).toEqual(['4', '1', '2', '3']);
 });
@@ -98,7 +97,6 @@ describe('checkTimezone - проверка вхождения прибора в 
 	test('Определение промежутка mode: day', () => {
 		let x = 9;
 		let result = Placer.checkTimezone(x, block1);
-		console.log(x, block1, result)
 		expect(result).toEqual(false);
 
 		x = 10;
@@ -143,33 +141,6 @@ describe('checkTimezone - проверка вхождения прибора в 
 	});
 });
 
-describe('findEmptySpaces - подбор подходящих по размеру ячеек для блока', () => {
-
-
-	Placer.data.inputData = {
-		maxPower: 2100
-	}
-	Placer.data.freePowerArray = []
-	const device = {
-		power: 300,
-		duration: 5
-	};
-
-	// Т.к. внутри ф-ции вызывается проверка временной зоны, поставим на нее всегда true
-	Placer.checkTimezone = jest.fn();
-	Placer.checkTimezone
-		.mockReturnValueOnce(false)
-		.mockReturnValue(true);
-
-	const result = Placer.findEmptySpaces(device);
-	test('Проверка количества возвращаемых вариантов размещения', () => {
-		expect(result).toHaveLength(19);
-	});
-	test('Проверка корректности установки значений', () => {
-		expect([result[0].newFreePowerArray[0], result[0].newFreePowerArray[1], result[0].newFreePowerArray[5], result[0].newFreePowerArray[6]]).toEqual([undefined, 300, 300, undefined]);
-	})
-	
-});
 
 
 test('spacesPricesChecker - лучшее положение для блока для для всех подходящих для него ячеек', () => {
