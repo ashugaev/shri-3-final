@@ -4,9 +4,9 @@ let Placer = {
         dayStart: 10,
         nightStart: 22,
 
-
         // Массив хранит информацию об оставшейся доступной мощности для каждого часа
         freePowerArray: [],
+      
         // Вых. данные
         outputData: {
             shedule: {},
@@ -18,17 +18,14 @@ let Placer = {
         }
     },
     start: function (inputData) {
-        console.time('speedCheck')
-        let devices = inputData.devices;
-        let rates = inputData.rates;
-
+        console.time('speedCheck');
         this.data.inputData = inputData
 
         // Отсортируем девайсы по мощности( за искл. круглосуточных )
-        devices = this.sortDevices(devices);
+        const devices = this.sortDevices(inputData.devices);
 
         // Уберем переходы через полночь в расценках
-        rates = this.splitMidnightRates(rates);
+        const rates = this.splitMidnightRates(inputData.rates);
 
         // Запускаем подбор мест для блоков
         return this.startFit(devices, rates);
@@ -36,18 +33,15 @@ let Placer = {
 
     // Функция подбора свободного пространства для блоков
     startFit: function (devices, rates) {
-        var placedBlock, oneDevice;
+        var placedBlock;
 
-        for (let n = 0; n < devices.length; n++) {
-            oneDevice = devices[n];
+        for (oneDevice of devices) {
             // Если получили ненулевое значение - значит место нашлось, делим оставшееся пространство
-            if ((placedBlock = this.startFinding(oneDevice, rates))) {
-                this.pushToOutput(placedBlock);
-            }
+            (placedBlock = this.startFinding(oneDevice, rates)) && this.pushToOutput(placedBlock);    
         }
 
         console.log(this.data.outputData)
-        // console.timeEnd('speedCheck')
+        console.timeEnd('speedCheck')
 
         // Тут пушим в массив, который в итоге будем давать как выходные данные
         return this.data.outputData;
@@ -56,7 +50,7 @@ let Placer = {
     // Возвращает оптимальное расположение блока
     startFinding: function (oneDevice, rates) {
         places = this.findEmptySpaces(oneDevice);
-        if (places.length === 0) {
+        if(!places.length) {
             // Пуш в массив неразмещенных блоков
             this.pushNotFitted(oneDevice);
             return null;
@@ -64,13 +58,11 @@ let Placer = {
         return this.findBestPosition(places, oneDevice, rates);
     },
 
-    // Проверяет хватает ли мощность для устройства на каждом x отрезке 
+    // Проверяет хватает ли мощности для устройства на каждом x отрезке 
     findEmptySpaces(oneDevice) {
-
-        // Координаты на которых ищем свободное место
+        // Значение на котором ищем свобдное место
         let x = 0;
         const maxPower = this.data.inputData.maxPower
-
         let goodPlaces = []
 
         // Второе условие для блоков длинной в 24
@@ -84,10 +76,10 @@ let Placer = {
 
             // Создаем независимую копию массива
             let tempFreePowerArray = this.data.freePowerArray.slice()
-            // Прогоняем через цикл, что бы проверить есть ли на каждой позиции x, которую занимает прибом необходимая мощность
+            // Прогоняем через цикл, что бы проверить есть ли на каждой позиции x, которую занимает прибор необходимая мощность
             for (let i = x; i < (x + oneDevice.duration); i++) {
                 // Если можем на этом часу добавить мощность устройства - добавляем
-                if (!tempFreePowerArray[i]) tempFreePowerArray[i] = 0
+                !tempFreePowerArray[i] && (tempFreePowerArray[i] = 0);
                 if ((tempFreePowerArray[i] + oneDevice.power) <= maxPower) {
                     tempFreePowerArray[i] += oneDevice.power;
 
@@ -198,12 +190,12 @@ let Placer = {
     },
 
     // Формируем массив с неразмещенными устройствами
-    pushNotFitted(block) {
+    pushNotFitted(device) {
         this.data.outputData.notFittedDevices.push({
-            deviceId: block.id
+            deviceId: device.id
         });
 
-        throw new Error('Невозможно добавить в расписание устройство: ', block.name);
+        throw new Error('Невозможно добавить в расписание устройство: ', device.name);
     },
 
     pushToOutput(block) {
@@ -227,7 +219,7 @@ let Placer = {
 
     splitMidnightRates(rates) {
         let modifiedRates = [];
-        rates.forEach((el, i) => {
+        rates.forEach(el => {
             if (el.from < el.to) {
                 modifiedRates.push(el);
             } else {
